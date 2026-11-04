@@ -8,18 +8,19 @@ The purpose of this project is to reduce audio activation latency by modifying t
 
 ## 📑 Table of contents
 
-- [Overview](#-overview)
-- [Firmware information](#-firmware-information)
+- [Overview](#overview)
+- [Firmware information](#firmware-information)
 - [Audio parameters](#audio-parameters)
-- [Binary modifications](#-binary-modifications)
-- [Requirements](#-requirements)
+- [Binary modifications](#binary-modifications)
+- [Requirements](#requirements)
+- [Repository structure](#repository-structure)
 - [Build instructions](#build-instructions)
-- [Firmware verification](#-firmware-verification)
-- [USB preparation](#-usb-preparation)
-- [Firmware installation](#-firmware-installation)
+- [Firmware verification](#firmware-verification)
+- [USB preparation](#usb-preparation)
+- [Firmware installation](#firmware-installation)
 - [Expected behaviour](#expected-behaviour)
-- [Post-update testing](#-post-update-testing)
-- [References](#-references)
+- [Post-update testing](#post-update-testing)
+- [References](#references)
 - [Disclaimer](#disclaimer)
 
 ---
@@ -42,7 +43,10 @@ The custom firmware keeps the original threshold, reduces the attack time to one
 
 ### Project status
 
-<badge color="success">Binary generated and verified</badge> <badge color="warning">Hardware validation pending</badge>
+- **Binary generation:** Completed.
+- **SHA-256 verification:** Completed.
+- **Firmware installation:** Pending.
+- **Physical audio performance validation:** Pending.
 
 The modified firmware has been generated and its SHA-256 hash matches the expected result. Physical installation and audio performance testing remain to be completed.
 
@@ -221,27 +225,74 @@ The original bootloader is not intentionally modified.
 
 No external Python packages are required.
 
-### Repository structure
+---
 
-The working directory should contain:
+## 📁 Repository structure
+
+The repository is organised as follows:
 
 ```text
 creative-stage-v1-audio-lag-firmware-fix/
-├── script.py
-└── og_crefw_upgrade_Dragon_SDK.bin
+├── files/
+│   ├── firmware-from-youtube/
+│   │   └── system/
+│   │       ├── upgrade_Dragon_SDK.bin
+│   │       └── upgrade.txt
+│   └── firmware-stock-upgrade/
+│       └── system/
+│           ├── upgrade_Dragon_SDK.bin
+│           └── upgrade.txt
+├── README.md
+└── script.py
 ```
 
-The original firmware filename used by the script is:
+### Directory contents
 
-```text
-og_crefw_upgrade_Dragon_SDK.bin
-```
+| Path | Description |
+|---|---|
+| `files/firmware-stock-upgrade/` | Original Creative V01 firmware update package. |
+| `files/firmware-from-youtube/` | Alternative No-Lag firmware package obtained from YouTube, kept for reference and comparison. |
+| `script.py` | Python script that patches the original Creative firmware. |
+| `README.md` | Project documentation and instructions. |
+
+**Important:** The alternative YouTube firmware is included for reference only. It must not be used as input to the patching script.
 
 ---
 
 ## 🛠️ Build instructions
 
-### 1. Configure the patch
+### 1. Prepare the original firmware
+
+The script expects the input file to be named:
+
+```text
+og_crefw_upgrade_Dragon_SDK.bin
+```
+
+The repository stores the official firmware package under:
+
+```text
+files/firmware-stock-upgrade/system/upgrade_Dragon_SDK.bin
+```
+
+Copy the original firmware to the repository root, using the filename expected by the script:
+
+```bash
+cp files/firmware-stock-upgrade/system/upgrade_Dragon_SDK.bin \
+   og_crefw_upgrade_Dragon_SDK.bin
+```
+
+The working directory should then contain:
+
+```text
+creative-stage-v1-audio-lag-firmware-fix/
+├── files/
+├── og_crefw_upgrade_Dragon_SDK.bin
+├── README.md
+└── script.py
+```
+
+### 2. Configure the patch
 
 Edit the configuration section in `script.py` if necessary:
 
@@ -252,7 +303,7 @@ HOLD_SECONDS = 70
 INPUT        = "og_crefw_upgrade_Dragon_SDK.bin"
 ```
 
-### 2. Generate the modified firmware
+### 3. Generate the modified firmware
 
 Run:
 
@@ -268,7 +319,7 @@ Changed 20 bytes: [...]
 Wrote out/system/  -> copy the whole 'system' folder to a FAT32 USB (<32GB).
 ```
 
-### 3. Generated files
+### 4. Generated files
 
 The script creates the following directory:
 
@@ -310,8 +361,6 @@ Expected result:
 ```text
 53ba88ae2047a7d602bea8cc5d4355280620e4bd2ae3cfad561750fd6bd57f76  out/system/upgrade_Dragon_SDK.bin
 ```
-
-<badge color="success">SHA-256 verified</badge>
 
 The generated firmware matches the expected hash and file size.
 
@@ -380,7 +429,7 @@ No special button combination is needed.
 
 The soundbar display will show:
 
-<badge color="info">UP</badge> **UP — Firmware update in progress**
+**UP — Firmware update in progress**
 
 This indicates that the firmware update is running.
 
@@ -390,7 +439,7 @@ This indicates that the firmware update is running.
 
 When the update has finished, the display will show:
 
-<badge color="success">SU</badge> **SU — Update completed**
+**SU — Update completed**
 
 **7. Disconnect the soundbar and USB drive**
 
